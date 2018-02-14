@@ -1,0 +1,24 @@
+prefix = first two letters in firstname and surename
+
+1. create resource group: [prefix]-rg-azbc
+2. create asp plan: [prefix]-asp-azbc
+3. create web app: [prefix]-wa-azbc
+4. create web api: [prefix]-api-azbc
+5. create application insight: [prefix]-ai-azbc
+6. create azure search: [prefix]-as-azbc
+7. create service bus namespace: [prefix]-sb-azbc
+8. create queue in service bus namespace: jobapplications
+9. create api management: [prefix]apimazbc
+10. configure the config files, change all the config values where this is stated <!-- THIS NEEDS TO BE CHANGED -->
+      - Dataloader
+          - App.config
+      - NYCJobsWeb
+          - ApplicationInsights.config
+          - Web.config
+          - Views/Shared/_Layout.cshtml (instrumentationKey)
+      - NYCJobsApi
+          - ApplicationInsights.config
+          - Web.config
+11. configure Data loader and execute 
+12. publish NYCJobsWeb
+13. publish NYCJobsApi

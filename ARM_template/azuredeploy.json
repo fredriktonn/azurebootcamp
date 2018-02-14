@@ -1,0 +1,596 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "user_prefix": {
+      "minLength": "4",
+      "maxLength": "4",
+      "type": "string",
+      "metadata": {
+        "description": "User prefix that will be added to all resources"
+      }
+    },
+
+
+    "apim_admin_email": {
+      "type": "string",
+      "metadata": {
+        "description": "Admin email to API Management"
+      }
+    },
+
+    "sendgrid_1_apiKey": {
+      "type": "string",
+      "defaultValue": "SG.7dQ_kIBGS3mr7-w7Nct_uA.7H7o-cYwrAkAlc7UELdN7mqp-_sTzYA_4iHDM4qDw5c",
+      "metadata": {
+        "description": "Send Grid API key"
+      }
+    },
+
+    "consistencyLevel": {
+      "type": "string",
+      "defaultValue": "Session",
+      "allowedValues": [
+        "Eventual",
+        "Strong",
+        "Session",
+        "BoundedStaleness"
+      ],
+      "metadata": {
+        "description": "The DocumentDB default consistency level for this account."
+      }
+    },
+    "maxStalenessPrefix": {
+      "type": "int",
+      "minValue": 10,
+      "maxValue": 1000,
+      "defaultValue": 10,
+      "metadata": {
+        "description": "When consistencyLevel is set to BoundedStaleness, then this value is required, otherwise it can be ignored."
+      }
+    },
+    "maxIntervalInSeconds": {
+      "type": "int",
+      "minValue": 5,
+      "maxValue": 600,
+      "defaultValue": 5,
+      "metadata": {
+        "description": "When consistencyLevel is set to BoundedStaleness, then this value is required, otherwise it can be ignored."
+      }
+    },
+    "webAppSKU": {
+      "type": "string",
+      "defaultValue": "Basic",
+      "allowedValues": [
+        "Free",
+        "Shared",
+        "Basic",
+        "Standard"
+      ],
+      "metadata": {
+        "description": "The Web App pricing tier"
+      }
+    },
+    "workerSize": {
+      "type": "string",
+      "defaultValue": "0",
+      "allowedValues": [
+        "0",
+        "1",
+        "2"
+      ],
+      "metadata": {
+        "description": "The Web App worker size"
+      }
+    },
+    "storageAccountType": {
+      "type": "string",
+      "defaultValue": "Standard_LRS",
+      "allowedValues": [
+        "Standard_LRS",
+        "Standard_ZRS",
+        "Standard_GRS",
+        "Standard_RAGRS",
+        "Premium_LRS"
+      ],
+      "metadata": {
+        "description": "The storage account type"
+      }
+    },
+    "azureSearchSku": {
+      "type": "string",
+      "defaultValue": "standard",
+      "allowedValues": [
+        "free",
+        "standard",
+        "standard2"
+      ],
+      "metadata": {
+        "description": "The azure search instance tier."
+      }
+    },
+    "azureSearchReplicaCount": {
+      "type": "int",
+      "defaultValue": 1,
+      "allowedValues": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "metadata": {
+        "description": "The number of search replicas"
+      }
+    },
+    "azureSearchPartitionCount": {
+      "type": "int",
+      "defaultValue": 1,
+      "allowedValues": [
+        1,
+        2,
+        3,
+        4,
+        6,
+        12
+      ],
+      "metadata": {
+        "description": "The number of search partitions"
+      }
+    },
+    "documentDBOfferType": {
+      "type": "string",
+      "defaultValue": "Standard",
+      "allowedValues": [
+        "Standard"
+      ],
+      "metadata": {
+        "description": "The DocumentDB offer type"
+      }
+    }
+  },
+
+
+  "variables": {
+    "storageAccountNameTmp": "[concat(parameters('user_prefix'), 'stgazbc')]",
+    "storageAccountName": "[concat(uniquestring(resourceGroup().id), variables('storageAccountNameTmp'))]",
+    "storageAccountid": "[concat(resourceGroup().id,'/providers/','Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]",
+    "webAppName": "[concat(parameters('user_prefix'), '-wa-azbc')]",
+    "apiName": "[concat(parameters('user_prefix'), '-api-azbc')]",
+    "appServicePlanName": "[concat(parameters('user_prefix'), '-asp-azbc')]",
+    "applicationInsightName": "[concat(parameters('user_prefix'), '-ai-azbc')]",
+    "databaseAccountName": "[concat(parameters('user_prefix'), '-cdb-azbc')]",
+    "azureSearchName": "[concat(parameters('user_prefix'), '-as-azbc')]",
+    "serviceBusName": "[concat(parameters('user_prefix'), '-sb-azbc')]",
+    "serviceBusQueueName": "jobapplications",
+    "serviceBusQueueNameNotification": "notificationqueue",
+    "azureFunctionName": "[concat(parameters('user_prefix'), '-af-azbc')]",
+    "apimName": "[concat(parameters('user_prefix'), 'apimazbc')]",
+    "logicAppName": "[concat(parameters('user_prefix'), '-logic-azbc')]",
+    "sendgrid_1_Connection_Name": "sendGridConnection",
+    "sendgrid_1_Connection_DisplayName": "SendGridConnection",
+    "servicebus_1_Connection_Name": "ServiceBusConnection",
+    "servicebus_1_Connection_DisplayName": "ServiceBusConnection"
+  },
+
+
+  "resources": [
+    {
+      "apiVersion": "2017-04-01",
+      "name": "[variables('serviceBusName')]",
+      "type": "Microsoft.ServiceBus/Namespaces",
+      "location": "[resourceGroup().location]",
+      "sku": {
+        "name": "Standard"
+      },
+
+      "resources": [
+        {
+          "apiVersion": "2017-04-01",
+          "name": "[variables('serviceBusQueueName')]",
+          "type": "Queues",
+          "dependsOn": [
+            "[concat('Microsoft.ServiceBus/namespaces/', variables('serviceBusName'))]"
+          ],
+          "properties": {
+            "lockDuration": "PT5M",
+            "maxSizeInMegabytes": "1024",
+            "requiresDuplicateDetection": "false",
+            "requiresSession": "false",
+            "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+            "deadLetteringOnMessageExpiration": "false",
+            "duplicateDetectionHistoryTimeWindow": "PT10M",
+            "maxDeliveryCount": "10",
+            "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+            "enablePartitioning": "false",
+            "enableExpress": "false"
+          }
+        },
+        {
+          "apiVersion": "2017-04-01",
+          "name": "[variables('serviceBusQueueNameNotification')]",
+          "type": "Queues",
+          "dependsOn": [
+            "[concat('Microsoft.ServiceBus/namespaces/', variables('serviceBusName'))]"
+          ],
+          "properties": {
+            "lockDuration": "PT5M",
+            "maxSizeInMegabytes": "1024",
+            "requiresDuplicateDetection": "false",
+            "requiresSession": "false",
+            "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+            "deadLetteringOnMessageExpiration": "false",
+            "duplicateDetectionHistoryTimeWindow": "PT10M",
+            "maxDeliveryCount": "10",
+            "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+            "enablePartitioning": "false",
+            "enableExpress": "false"
+          }
+        }
+      ]
+    },
+
+    {
+      "apiVersion": "2015-04-08",
+      "type": "Microsoft.DocumentDB/databaseAccounts",
+      "name": "[variables('databaseAccountName')]",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "displayName": "DocumentDB"
+      },
+      "properties": {
+        "name": "[variables('databaseAccountName')]",
+        "databaseAccountOfferType": "[parameters('documentDBOfferType')]",
+        "consistencyPolicy": {
+          "defaultConsistencyLevel": "[parameters('consistencyLevel')]",
+          "maxStalenessPrefix": "[parameters('maxStalenessPrefix')]",
+          "maxIntervalInSeconds": "[parameters('maxIntervalInSeconds')]"
+        },
+        "locations": [
+          {
+            "locationName": "[resourceGroup().location]",
+            "failoverPriority": 0
+          }
+        ]
+      }
+    },
+
+    {
+      "type": "Microsoft.Web/serverfarms",
+      "apiVersion": "2016-09-01",
+      "name": "[variables('appServicePlanName')]",
+      "location": "[resourceGroup().location]",
+      "sku": {
+        "name": "B1",
+        "tier": "Basic",
+        "size": "B1",
+        "family": "B",
+        "capacity": 1
+      },
+      "properties": {
+        "name": "[variables('appServicePlanName')]",
+        "workerSize": "1",
+        "hostingEnvironment": "",
+        "numberOfWorkers": 1
+      }
+    },
+
+    {
+      "apiVersion": "2016-08-01",
+      "name": "[variables('azureFunctionName')]",
+      "type": "Microsoft.Web/sites",
+      "kind": "functionapp",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]",
+        "[concat('Microsoft.Web/serverfarms/', variables('appServicePlanName'))]"
+      ],
+      "properties": {
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms/', variables('appServicePlanName'))]",
+        "siteConfig": {
+          "alwaysOn": true,
+          "clientAffinityEnabled": true
+        }
+      },
+      "resources": [
+        {
+          "apiVersion": "2016-08-01",
+          "name": "appsettings",
+          "type": "config",
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/Sites', variables('azureFunctionName'))]",
+            "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
+          ],
+          "properties": {
+            "AzureWebJobsStorage": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(variables('storageAccountid'),'2016-12-01').keys[0].value)]",
+            "AzureWebJobsDashboard": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(variables('storageAccountid'),'2016-12-01').keys[0].value)]",
+            "FUNCTIONS_EXTENSION_VERSION": "~1",
+            "WEBSITE_NODE_DEFAULT_VERSION": "6.5.0"
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "[variables('webAppName')]",
+      "type": "Microsoft.Web/sites",
+      "apiVersion": "2016-08-01",
+      "location": "[resourceGroup().location]",
+      "scale": null,
+      "properties": {
+        "enabled": true,
+        "hostNameSslStates": [
+          {
+            "name": "[concat(variables('webAppName'),'.azurewebsites.net')]",
+            "sslState": "Disabled",
+
+            "hostType": "Standard"
+          },
+          {
+            "name": "[concat(variables('webAppName'),'.scm.azurewebsites.net')]",
+            "sslState": "Disabled",
+
+            "hostType": "Repository"
+          }
+        ],
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlanName'))]",
+        "reserved": false,
+        "scmSiteAlsoStopped": false,
+        "clientAffinityEnabled": true,
+        "clientCertEnabled": false,
+        "hostNamesDisabled": false,
+        "containerSize": 0,
+        "dailyMemoryTimeQuota": 0
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlanName'))]"
+      ]
+    },
+
+    {
+      "name": "[variables('apiName')]",
+      "type": "Microsoft.Web/sites",
+      "kind": "api",
+      "apiVersion": "2016-08-01",
+      "location": "[resourceGroup().location]",
+      "scale": null,
+      "properties": {
+        "enabled": true,
+        "hostNameSslStates": [
+          {
+            "name": "[concat(variables('apiName'),'.azurewebsites.net')]",
+            "sslState": "Disabled",
+            "virtualIP": null,
+            "thumbprint": null,
+            "toUpdate": null,
+            "hostType": "Standard"
+          },
+          {
+            "name": "[concat(variables('apiName'),'.scm.azurewebsites.net')]",
+            "sslState": "Disabled",
+            "virtualIP": null,
+            "thumbprint": null,
+            "toUpdate": null,
+            "hostType": "Repository"
+          }
+        ],
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlanName'))]",
+        "reserved": false,
+        "siteConfig": null,
+        "scmSiteAlsoStopped": false,
+        "hostingEnvironmentProfile": null,
+        "clientAffinityEnabled": true,
+        "clientCertEnabled": false,
+        "hostNamesDisabled": false,
+        "containerSize": 0,
+        "dailyMemoryTimeQuota": 0,
+        "cloningInfo": null
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlanName'))]"
+      ]
+    },
+
+    {
+      "type": "Microsoft.Storage/storageAccounts",
+      "name": "[variables('storageAccountName')]",
+      "apiVersion": "2017-06-01",
+      "location": "[resourceGroup().location]",
+      "sku": {
+        "name": "Standard_LRS"
+      },
+      "kind": "Storage"
+    },
+
+    {
+      "apiVersion": "2015-02-28",
+      "name": "[variables('azureSearchName')]",
+      "type": "Microsoft.Search/searchServices",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "displayName": "Azure Search"
+      },
+      "properties": {
+        "sku": {
+          "name": "[parameters('azureSearchsku')]"
+        },
+        "replicaCount": "[parameters('azureSearchreplicaCount')]",
+        "partitionCount": "[parameters('azureSearchpartitionCount')]"
+      }
+    },
+
+    {
+      "apiVersion": "2014-04-01",
+      "dependsOn": [
+        "[concat('Microsoft.Web/sites/', variables('webAppName'))]"
+      ],
+      "location": "[resourceGroup().location]",
+      "name": "[variables('applicationInsightName')]",
+      "properties": {
+        "applicationId": "[variables('webAppName')]"
+      },
+      "tags": {
+        "displayName": "Application Insights"
+      },
+      "type": "Microsoft.Insights/components"
+    },
+
+    {
+      "apiVersion": "2014-02-14",
+      "name": "[variables('apimName')]",
+      "type": "Microsoft.ApiManagement/service",
+      "location": "[resourceGroup().location]",
+      "tags": {
+      },
+      "properties": {
+        "sku": {
+          "name": "Developer",
+          "capacity": "1"
+        },
+        "publisherEmail": "[parameters('apim_admin_email')]",
+        "publisherName": "[concat(parameters('user_prefix'), ' Hackaton APIM')]"
+      }
+    },
+
+    {
+      "name": "[variables('logicAppName')]",
+      "type": "Microsoft.Logic/workflows",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "displayName": "LogicApp"
+      },
+      "apiVersion": "2016-06-01",
+      "properties": {
+        "definition": {
+          "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+          "actions": {
+            "Parse_JSON": {
+              "type": "ParseJson",
+              "inputs": {
+                "content": "@base64ToString(triggerBody()?['ContentData'])",
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "title": {
+                      "type": "string"
+                    },
+                    "city": {
+                      "type": "string"
+                    },
+                    "email": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "runAfter": {}
+            },
+            "Send_email_(V2)": {
+              "type": "ApiConnection",
+              "inputs": {
+                "host": {
+                  "connection": {
+                    "name": "@parameters('$connections')['sendgrid']['connectionId']"
+                  }
+                },
+                "method": "post",
+                "path": "/mail/send",
+                "body": {
+                  "from": "jonas.norlund@outlook.com",
+                  "to": "@body('Parse_JSON')?['email']",
+                  "subject": "Job apply Confirmation",
+                  "text": "Thanks for applying to the role @{body('Parse_JSON')?['title']}",
+                  "ishtml": true
+                }
+              },
+              "runAfter": {
+                "Parse_JSON": [
+                  "Succeeded"
+                ]
+              }
+            }
+          },
+          "parameters": {
+            "$connections": {
+              "defaultValue": {},
+              "type": "Object"
+            }
+          },
+          "triggers": {
+            "When_a_message_is_received_in_a_queue_(auto-complete)": {
+              "type": "ApiConnection",
+              "inputs": {
+                "host": {
+                  "connection": {
+                    "name": "@parameters('$connections')['servicebus_1']['connectionId']"
+                  }
+                },
+                "method": "get",
+                "path": "/@{encodeURIComponent('notificationqueue')}/messages/head",
+                "queries": {
+                  "queueType": "Main"
+                }
+              },
+              "recurrence": {
+                "frequency": "Second",
+                "interval": 3
+              }
+            }
+          },
+          "contentVersion": "1.0.0.0",
+          "outputs": {}
+        },
+        "parameters": {
+          "$connections": {
+            "value": {
+              "sendgrid": {
+                "id": "[concat(subscription().id, '/providers/Microsoft.Web/locations/', resourceGroup().location, '/managedApis/', 'sendgrid')]",
+                "connectionId": "[resourceId('Microsoft.Web/connections', variables('sendgrid_1_Connection_Name'))]",
+                "connectionName": "[variables('sendgrid_1_Connection_Name')]"
+              },
+              "servicebus_1": {
+                "id": "[concat(subscription().id, '/providers/Microsoft.Web/locations/', resourceGroup().location, '/managedApis/', 'servicebus')]",
+                "connectionId": "[resourceId('Microsoft.Web/connections', variables('servicebus_1_Connection_Name'))]",
+                "connectionName": "[variables('servicebus_1_Connection_Name')]"
+              }
+            }
+          }
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/connections', variables('sendgrid_1_Connection_Name'))]",
+        "[resourceId('Microsoft.Web/connections', variables('servicebus_1_Connection_Name'))]"
+      ]
+    },
+    {
+      "type": "MICROSOFT.WEB/CONNECTIONS",
+      "apiVersion": "2016-06-01",
+      "name": "[variables('servicebus_1_Connection_Name')]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "api": {
+          "id": "[concat(subscription().id, '/providers/Microsoft.Web/locations/', resourceGroup().location, '/managedApis/', 'servicebus')]"
+        },
+        "displayName": "[variables('servicebus_1_Connection_DisplayName')]"        
+      }
+    },
+    {
+      "type": "MICROSOFT.WEB/CONNECTIONS",
+      "apiVersion": "2016-06-01",
+      "name": "[variables('sendgrid_1_Connection_Name')]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "api": {
+          "id": "[concat(subscription().id, '/providers/Microsoft.Web/locations/', resourceGroup().location, '/managedApis/', 'sendgrid')]"
+        },
+        "displayName": "[variables('sendgrid_1_Connection_DisplayName')]",
+        "parameterValues": {
+          "apiKey": "[parameters('sendgrid_1_apiKey')]"
+        }
+      }
+    }
+  ] }

@@ -1,0 +1,15 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "logicAppName": {
+      "value": "NYCLogicApp"
+    },
+    "servicebus_1_connectionString": {
+      "value": "Endpoint=sb://jono-sb-azbc.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=jOTsHKqgyX3v1R66QKeJYNi5ZnZBgDo5wWtgidKU5to="
+    },
+    "sendgrid_1_apiKey": {
+      "value": "SG.7dQ_kIBGS3mr7-w7Nct_uA.7H7o-cYwrAkAlc7UELdN7mqp-_sTzYA_4iHDM4qDw5c"
+    }
+  }
+}

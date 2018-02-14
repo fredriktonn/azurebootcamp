@@ -1,0 +1,75 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26730.12
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NYCJobsWeb", "NYCJobsWeb\NYCJobsWeb.csproj", "{0380803A-C243-4F18-BD41-2C1D65296C96}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{DC6DA3BE-C572-4C10-B4C5-78BB2FC08471}"
+	ProjectSection(SolutionItems) = preProject
+		Local.testsettings = Local.testsettings
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebAndLoadTestProject1", "WebAndLoadTestProject1\WebAndLoadTestProject1.csproj", "{655591C3-8A06-4173-92FB-90EEB75350CA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataLoader", "DataLoader\DataLoader\DataLoader.csproj", "{ECC9C982-9638-4241-8903-A0BFD3240571}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{2C05C128-EAFA-41FD-9DC5-0F2972136329}"
+	ProjectSection(SolutionItems) = preProject
+		docs\AppDev - Lab.pptx = docs\AppDev - Lab.pptx
+		docs\Azure Bootcamp App Dev.docx = docs\Azure Bootcamp App Dev.docx
+		docs\Azure Bootcamp App Dev.pdf = docs\Azure Bootcamp App Dev.pdf
+		azureportal.png = azureportal.png
+		NOTES.txt = NOTES.txt
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NYCJobsApi", "NYCJobsApi\NYCJobsApi.csproj", "{A933936C-E6E1-46E1-A309-5AD613F860E6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NYCJobsWeb_student", "NYCJobsWeb_student\NYCJobsWeb_student.csproj", "{9773470E-E011-4ABD-BDF6-0CF23168FC82}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NYCJobsApi_student", "NYCJobsApi_student\NYCJobsApi_student.csproj", "{76E386F2-2590-4925-9A8E-BB22F66A371C}"
+EndProject
+Project("{151D2E53-A2C4-4D7D-83FE-D05416EBD58E}") = "AzureResourceGroup", "ARM_template\AzureResourceGroup.deployproj", "{A66BC7EC-43BD-4F48-AFE1-6BA6432952D0}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0380803A-C243-4F18-BD41-2C1D65296C96}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0380803A-C243-4F18-BD41-2C1D65296C96}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0380803A-C243-4F18-BD41-2C1D65296C96}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0380803A-C243-4F18-BD41-2C1D65296C96}.Release|Any CPU.Build.0 = Release|Any CPU
+		{655591C3-8A06-4173-92FB-90EEB75350CA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{655591C3-8A06-4173-92FB-90EEB75350CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{655591C3-8A06-4173-92FB-90EEB75350CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{655591C3-8A06-4173-92FB-90EEB75350CA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ECC9C982-9638-4241-8903-A0BFD3240571}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ECC9C982-9638-4241-8903-A0BFD3240571}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ECC9C982-9638-4241-8903-A0BFD3240571}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ECC9C982-9638-4241-8903-A0BFD3240571}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A933936C-E6E1-46E1-A309-5AD613F860E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A933936C-E6E1-46E1-A309-5AD613F860E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A933936C-E6E1-46E1-A309-5AD613F860E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A933936C-E6E1-46E1-A309-5AD613F860E6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9773470E-E011-4ABD-BDF6-0CF23168FC82}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9773470E-E011-4ABD-BDF6-0CF23168FC82}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9773470E-E011-4ABD-BDF6-0CF23168FC82}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9773470E-E011-4ABD-BDF6-0CF23168FC82}.Release|Any CPU.Build.0 = Release|Any CPU
+		{76E386F2-2590-4925-9A8E-BB22F66A371C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{76E386F2-2590-4925-9A8E-BB22F66A371C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{76E386F2-2590-4925-9A8E-BB22F66A371C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{76E386F2-2590-4925-9A8E-BB22F66A371C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A66BC7EC-43BD-4F48-AFE1-6BA6432952D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A66BC7EC-43BD-4F48-AFE1-6BA6432952D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A66BC7EC-43BD-4F48-AFE1-6BA6432952D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A66BC7EC-43BD-4F48-AFE1-6BA6432952D0}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {285691BA-CFF2-4B73-A919-2CA20ACF2130}
+	EndGlobalSection
+EndGlobal

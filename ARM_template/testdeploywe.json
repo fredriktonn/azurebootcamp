@@ -1,0 +1,224 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "storageAccounts_arrasshackatonwe_name": {
+      
+      "type": "String"
+    },
+    "serverfarms_arrashackatonwe_name": {
+      
+      "type": "String"
+    },
+    "sites_arrasshackatonwe_name": {
+      
+      "type": "String"
+    },
+    "config_web_name": {
+      
+      "type": "String"
+    },
+    "hostNameBindings_arrasshackatonwe.azurewebsites.net_name": {
+      
+      "type": "String"
+    }
+  },
+  "variables": {
+    "storageAccountid": "[concat(resourceGroup().id,'/providers/','Microsoft.Storage/storageAccounts/', parameters('storageAccounts_arrasshackatonwe_name'))]"
+  },
+  "resources": [
+
+    {
+      "comments": "Generalized from resource: '/subscriptions/5607365d-6a4d-41e3-b594-10cb3a5fbabf/resourceGroups/hackatonwe/providers/Microsoft.Storage/storageAccounts/arrasshackatonwe'.",
+      "type": "Microsoft.Storage/storageAccounts",
+      "sku": {
+        "name": "Standard_LRS",
+        "tier": "Standard"
+      },
+      "kind": "Storage",
+      "name": "[parameters('storageAccounts_arrasshackatonwe_name')]",
+      "apiVersion": "2016-01-01",
+      "location": "[resourceGroup().location]",
+      "tags": {},
+
+      "properties": {},
+      "dependsOn": []
+    },
+    {
+      "comments": "Generalized from resource: '/subscriptions/5607365d-6a4d-41e3-b594-10cb3a5fbabf/resourceGroups/HackatonWE/providers/Microsoft.Web/serverfarms/arrashackatonwe'.",
+      "type": "Microsoft.Web/serverfarms",
+      "sku": {
+        "name": "B1",
+        "tier": "Basic",
+        "size": "B1",
+        "family": "B",
+        "capacity": 1
+      },
+      "kind": "app",
+      "name": "[parameters('serverfarms_arrashackatonwe_name')]",
+      "apiVersion": "2016-09-01",
+      "location": "[resourceGroup().location]",
+
+      "properties": {
+        "name": "[parameters('serverfarms_arrashackatonwe_name')]",
+
+        "perSiteScaling": false,
+        "reserved": false,
+        "targetWorkerCount": 0,
+        "targetWorkerSizeId": 0
+      },
+      "dependsOn": []
+    },
+    {
+      "comments": "Generalized from resource: '/subscriptions/5607365d-6a4d-41e3-b594-10cb3a5fbabf/resourceGroups/HackatonWE/providers/Microsoft.Web/sites/arrasshackatonwe'.",
+      "type": "Microsoft.Web/sites",
+      "kind": "functionapp",
+      "name": "[parameters('sites_arrasshackatonwe_name')]",
+      "apiVersion": "2016-08-01",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "hidden-related:/subscriptions/5607365d-6a4d-41e3-b594-10cb3a5fbabf/resourcegroups/HackatonWE/providers/Microsoft.Web/serverfarms/arrashackatonwe": "empty"
+      },
+      "properties": {
+        "appSettings": [
+          {
+            "Name": "Arash",
+            "Value": "Test"
+          }
+        ],
+        "enabled": true,
+        "hostNameSslStates": [
+          {
+            "name": "[concat(parameters('sites_arrasshackatonwe_name'),'.azurewebsites.net')]",
+            "sslState": "Disabled",
+            "hostType": "Standard"
+          },
+          {
+            "name": "[concat(parameters('sites_arrasshackatonwe_name'),'.scm.azurewebsites.net')]",
+            "sslState": "Disabled",
+            "hostType": "Repository"
+          }
+        ],
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_arrashackatonwe_name'))]",
+        "reserved": false,
+        "scmSiteAlsoStopped": false,
+        "clientAffinityEnabled": false,
+        "clientCertEnabled": false,
+        "hostNamesDisabled": false,
+        "containerSize": 1536,
+        "dailyMemoryTimeQuota": 0
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_arrashackatonwe_name'))]",
+        "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_arrasshackatonwe_name'))]"
+      ]
+    },
+    {
+      "comments": "Generalized from resource: '/subscriptions/5607365d-6a4d-41e3-b594-10cb3a5fbabf/resourceGroups/HackatonWE/providers/Microsoft.Web/sites/arrasshackatonwe/config/web'.",
+      "type": "Microsoft.Web/sites/config",
+      "name": "[parameters('config_web_name')]",
+      "apiVersion": "2016-08-01",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "hidden-related:/subscriptions/5607365d-6a4d-41e3-b594-10cb3a5fbabf/resourcegroups/HackatonWE/providers/Microsoft.Web/serverfarms/arrashackatonwe": "empty"
+      },
+
+      "properties": {
+        "numberOfWorkers": 1,
+        "defaultDocuments": [
+          "Default.htm",
+          "Default.html",
+          "Default.asp",
+          "index.htm",
+          "index.html",
+          "iisstart.htm",
+          "default.aspx",
+          "index.php",
+          "hostingstart.html"
+        ],
+        "netFrameworkVersion": "v4.0",
+        "phpVersion": "5.6",
+        "pythonVersion": "",
+        "nodeVersion": "",
+        "linuxFxVersion": "",
+        "requestTracingEnabled": false,
+        "remoteDebuggingEnabled": false,
+
+        "httpLoggingEnabled": false,
+        "logsDirectorySizeLimit": 35,
+        "detailedErrorLoggingEnabled": false,
+        "publishingUsername": "$arrasshackatonwe",
+
+        "appSettings": [
+          {
+            "name": "Arash",
+            "value": "Testing"
+          }
+        ],
+
+        "scmType": "None",
+        "use32BitWorkerProcess": true,
+        "webSocketsEnabled": false,
+        "alwaysOn": true,
+
+        "appCommandLine": "",
+        "managedPipelineMode": "Integrated",
+        "virtualApplications": [
+          {
+            "virtualPath": "/",
+            "physicalPath": "site\\wwwroot",
+            "preloadEnabled": true
+
+          }
+        ],
+        "winAuthAdminState": 0,
+        "winAuthTenantState": 0,
+        "customAppPoolIdentityAdminState": false,
+        "customAppPoolIdentityTenantState": false,
+
+        "loadBalancing": "LeastRequests",
+
+
+        "autoHealEnabled": false,
+
+
+        "vnetName": "",
+        "siteAuthEnabled": false,
+        "siteAuthSettings": {
+
+        },
+        "cors": {
+          "allowedOrigins": [
+            "https://functions.azure.com",
+            "https://functions-staging.azure.com",
+            "https://functions-next.azure.com"
+          ]
+        },
+
+        "localMySqlEnabled": false
+
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/sites', parameters('sites_arrasshackatonwe_name'))]",
+        "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_arrasshackatonwe_name'))]"
+      ]
+    },
+
+    {
+      "comments": "Generalized from resource: '/subscriptions/5607365d-6a4d-41e3-b594-10cb3a5fbabf/resourceGroups/HackatonWE/providers/Microsoft.Web/sites/arrasshackatonwe/hostNameBindings/arrasshackatonwe.azurewebsites.net'.",
+      "type": "Microsoft.Web/sites/hostNameBindings",
+      "name": "[parameters('hostNameBindings_arrasshackatonwe.azurewebsites.net_name')]",
+      "apiVersion": "2016-08-01",
+      "location": "[resourceGroup().location]",
+
+      "properties": {
+        "siteName": "arrasshackatonwe",
+        "hostNameType": "Verified"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/sites', parameters('sites_arrasshackatonwe_name'))]",
+        "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_arrasshackatonwe_name'))]"
+      ]
+    }
+  ]
+}

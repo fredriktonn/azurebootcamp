@@ -1,0 +1,21 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "storageAccounts_arrasshackatonwe_name": {
+        "value": "arrasshackatonwed"
+      },
+      "serverfarms_arrashackatonwe_name": {
+        "value": "arrashackatonwed"
+      },
+      "sites_arrasshackatonwe_name": {
+        "value": "arrasshackatonwed"
+      },
+      "config_web_name": {
+        "value": "arrasshackatonwed/web"
+      },
+      "hostNameBindings_arrasshackatonwe.azurewebsites.net_name": {
+        "value": "arrasshackatonwed/arrasshackatonwed.azurewebsites.net"
+      }
+    }
+}

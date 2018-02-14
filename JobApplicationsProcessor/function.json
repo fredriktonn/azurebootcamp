@@ -1,0 +1,22 @@
+﻿{
+  "bindings": [
+    {
+      "name": "myQueueItem",
+      "type": "serviceBusTrigger",
+      "direction": "in",
+      "queueName": "jobapplications",
+      "connection": "arra-sb-azbc_RootManageSharedAccessKey_SERVICEBUS",
+      "accessRights": "Listen"
+    },
+    {
+      "type": "documentDB",
+      "name": "outputDocument",
+      "databaseName": "JobDb",
+      "collectionName": "JobApplications",
+      "createIfNotExists": true,
+      "connection": "arra-cdb-azbc_DOCUMENTDB",
+      "direction": "out"
+    }
+  ],
+  "disabled": false
+}
